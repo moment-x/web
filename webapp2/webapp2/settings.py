@@ -89,8 +89,6 @@ AUTH_USER_MODEL = 'users.Users'
 
 AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend',)
 
-#DEBUG_PROPAGATE_EXCEPTIONS = True
-
 
 
 BROKER_URL = 'amqp://user:password@rabbitmq:5672/vhost'
