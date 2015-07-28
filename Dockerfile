@@ -1,7 +1,15 @@
 FROM python:3.4.3
 
+
 RUN apt-get -y update
+
 RUN apt-get -y upgrade
+
+RUN apt-get install lrzsz
+
+RUN apt-get install nano
+
+RUN apt-get install unzip
 
 RUN mkdir -p /usr/src/app
 
