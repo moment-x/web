@@ -91,5 +91,5 @@ AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend',)
 
 
 
-BROKER_URL = 'amqp://guest:guest@rabbitmq:5672/vhost'
+BROKER_URL = 'amqp://guest:guest@rabbitmq:5672//'
 # BROKER_URL = 'amqp://guest@localhost//'
