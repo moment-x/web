@@ -1,6 +1,7 @@
 FROM python:3.4.3
 
 RUN apt-get update
+RUN apt-get upgrade
 
 RUN mkdir -p /usr/src/app
 

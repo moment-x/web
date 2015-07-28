@@ -43,4 +43,6 @@ def login(request):
 
 @csrf_exempt
 def test(request):
-    return HttpResponse('asdf')
+    from ..tasks import test_celery
+    test_celery.delay()
+    return HttpResponse(test_celery.name)
