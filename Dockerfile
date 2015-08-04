@@ -21,4 +21,4 @@ RUN pip install -r requirements.txt
 
 CMD uwsgi --ini /usr/src/app/webapp2/webapp2/wsgi.ini
 
-EXPOSE 9090
+EXPOSE 8000
