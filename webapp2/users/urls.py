@@ -1,8 +1,6 @@
-from django.conf.urls import url
+from django.conf.urls import url        # django
 
-from .api import basic
-from .api import friend
-
+from .api import basic, friend, avatar    # project
 
 
 urlpatterns = [
@@ -14,10 +12,9 @@ urlpatterns = [
     url(r'^getreq$', friend.get_req),
     url(r'^resreq$', friend.res_req),
     url(r'^frdlist$', friend.frd_list),
-    url(r'^getavatar$', friend.get_avatar),
     #
-    url(r'^test$', basic.test),
     url(r'^validate$', friend.validate),
-    url(r'^v2$', friend.v2),
-
+    #
+    url(r'^avatarsign$', avatar.signUploadAvatar),
+    url(r'^qimage_avatar_callback$', avatar.qimage_avatar_callback),
 ]

@@ -1,9 +1,9 @@
-from django.contrib.auth.signals import user_logged_in
+from django.contrib.auth.signals import user_logged_in           # django
 from django.dispatch import receiver
-from .models import UserSession
 from django.http import JsonResponse, HttpResponse
 
-from .models import Users
+from .models import Users                                        # project
+from .models import UserSession
 
 
 HASH_SESSION_KEY = '_auth_user_hash'
@@ -13,7 +13,7 @@ HASH_SESSION_KEY = '_auth_user_hash'
 def user_logged_in_handler(sender, request, user, **kwargs):
     Users.objects.delete_user_sessions(user)
     request.session.save()
-    # It can be access only after saved
+    # Session can be access only after saved
     UserSession.objects.get_or_create(
         user=user,
         session_id=request.session.session_key

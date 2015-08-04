@@ -11,39 +11,26 @@ import json
 
 @csrf_exempt
 @login_required
-def upload(request, type):
-    data = request.POST.dict()
-    data['user'] = request.user
-    {
-        'pic': PictureEntity,
-        'text': TextEntity,
-        'textextra': TextEntityExtra,
-        'web': WebEntity,
-        'card': Cards,
-    }[type].objects.create(**data)
-    return json_resps['SUCCEEDED']
-
-
-@csrf_exempt
-@login_required
-def download(request, type):
-    user = request.user
-    result = {
-        'pic': PictureEntity,
-        'text': TextEntity,
-        'web': WebEntity,
-        'card': Cards,
-        'textextra': TextEntityExtra,
-    }[type].objects.filter(user=user).values()
-    return JsonResponse(list(result), safe=False)
-
-
-@csrf_exempt
-@login_required
 def send(request):
-    return JsonResponse({'gg': str(request.body)})
-    # import json
-    # json_data = json.dumps(request.POST)
-    # return JsonResponse({'gg': request.POST.dict()})
-    # receiver = Users.objects.get()
-    # PendingData.objects.create(users=receiver, json=request.POST)
+    from ..tasks import upload_pending_data_notify_receiver
+    import json
+    receiver = Users.objects.get(username=request.POST['headDic[receiver]'])
+    upload_pending_data_notify_receiver.delay(request.user, receiver, json.dumps(request.POST.dict()))
+    return JsonResponse({'error': 200})
+
+
+@csrf_exempt
+@login_required
+def receive(request, id):
+    pendingdata = PendingData.objects.get(id=id)
+    if request.user.id == pendingdata.receiver_id:
+        data = pendingdata.json
+        dataim = json.loads(data)
+        dataim['errcode'] = 0
+        return JsonResponse(dataim)
+    else:
+        return JsonResponse(
+            {
+             'errorcode': 1
+             }
+        )

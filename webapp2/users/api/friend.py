@@ -1,12 +1,26 @@
-from django.http import HttpResponse,JsonResponse,FileResponse
+from django.contrib.auth.decorators import login_required        # django
+from django.http import HttpResponse,JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth.decorators import login_required
 
+from .resps import json_resps                                    # project
 from users.models import Users
-from .resps import json_resps
 
-from django.http import JsonResponse
-import base64
+import base64                                                    # python
+
+
+ADD_POST_FIELD_FRIEND = 'friend'
+RES_POST_FIELD_FRIEND = 'friend'
+RES_POST_FIELD_DECISION = 'decision'
+RES_DECISION_YES = 'yes'
+JSON_RESPONSE_DOES_NOT_EXIST = 'DOES_NOT_EXIST'
+JSON_RESPONSE_SUCCEED = 'SUCCEEDED'
+USERS_MODEL_FIELD_USERNAME = 'username'
+USERS_MODEL_FIELD_NICKNAME = 'username'
+LIST_PAIR_USERNAME = 'username'
+LIST_PAIR_NICKNAME = 'nickname'
+AVATAR_POST_FIELD_USERNAME = 'username'
+UTF8 = 'utf-8'
+VALIDATE_POST_FIELD_USERNAMES = 'usernames[]'
 
 
 @csrf_exempt
@@ -14,58 +28,40 @@ import base64
 def add_req(request):
     data = request.POST.dict()
     try:
-        friend = Users.objects.get(username=data['friend'])
+        friend = Users.objects.get(username=data[ADD_POST_FIELD_FRIEND])
     except Users.DoesNotExist:
-        return json_resps['FRIEND_ALREADY_EXISTS']
+        return json_resps[JSON_RESPONSE_DOES_NOT_EXIST]
     request.user.friends_request.add(friend)
-
-    from ..tasks import add_req_push_n
-    add_req_push_n(request.user, friend)
-    # 2b
     from ..tasks import add_req_push
     add_req_push(request.user, friend)
-    # 2b
-    return json_resps['SUCCEEDED']
+    return json_resps[JSON_RESPONSE_SUCCEED]
 
 
 @csrf_exempt
 @login_required()
 def get_req(request):
-    senders = request.user.friends_request.values_list('username', flat=True)
+    senders = request.user.friends_request.values_list(USERS_MODEL_FIELD_USERNAME, flat=True)
     return JsonResponse(list(senders),  safe=False)
 
 
 @csrf_exempt
 @login_required()
 def res_req(request):
-    friend = Users.objects.get(username=request.POST['friend'])
+    friend = Users.objects.get(username=request.POST[RES_POST_FIELD_FRIEND])
     request.user.friends_request.remove(friend)
-    if request.POST['decision'] == 'yes':
+    if request.POST[RES_POST_FIELD_DECISION] == RES_DECISION_YES:
         request.user.friends.add(friend)
-    return json_resps['SUCCEEDED']
+    return json_resps[JSON_RESPONSE_SUCCEED]
 
 
 @csrf_exempt
 @login_required()
 def frd_list(request):
-    friends = request.user.friends.values_list('username', 'nickname')
+    friends = request.user.friends.values_list(USERS_MODEL_FIELD_USERNAME, USERS_MODEL_FIELD_NICKNAME)
     username, nickname = zip(*friends)
-    pair = {'username': username, 'nickname': nickname}
+    pair = {LIST_PAIR_USERNAME: username, LIST_PAIR_NICKNAME: nickname}
     return JsonResponse(pair, safe=False)
 
-
-@csrf_exempt
-def get_avatar(request):
-    img = Users.objects.get(username=request.POST['username']).Img
-    return JsonResponse(base64.b64encode(img).decode('utf-8'), safe=False)
-
-
-# @csrf_exempt
-# @login_required
-# def test(request):
-#     ip_address = request.META.get('REMOTE_ADDR', '')
-#     content = request.session.items()
-#     return JsonResponse((dict(content), ip_address), safe=False)
 
 
 @csrf_exempt

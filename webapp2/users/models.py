@@ -1,11 +1,10 @@
-from django.db import models
+from django.conf import settings                         #django
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
-from django.contrib.auth.models import check_password
-from django.contrib.auth.backends import ModelBackend
-from django.conf import settings
-from django.db import models
 from django.contrib.sessions.models import Session
+from django.db import models
 
+MODEL_SELF = 'self'
+FIELD_USERNAME = 'username'
 
 class UserManager(BaseUserManager):
     def create_user(self, password, **kwargs):
@@ -28,14 +27,14 @@ class Users(AbstractBaseUser):
     sex = models.CharField(max_length=100, null=True)
     cardNum = models.CharField(max_length=100, null=True)
     name = models.CharField(max_length=100, null=True)
-    Img = models.CharField(max_length=1048576, null=True)
     token = models.CharField(max_length=1076, null=True)
 
-    friends = models.ManyToManyField('self')
-    friends_request = models.ManyToManyField('self')
+    friends = models.ManyToManyField(MODEL_SELF)
+    friends_request = models.ManyToManyField(MODEL_SELF)
     #
-    USERNAME_FIELD = 'username'
+    USERNAME_FIELD = FIELD_USERNAME
     #
+
     objects = UserManager()
 
 
@@ -43,5 +42,7 @@ class UserSession(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
     session = models.ForeignKey(Session)
 
-class Test(models.Model):
-    text = models.CharField(max_length=100, null=True)
+
+class UserAvatar(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL)
+    url = models.CharField(max_length=200, null=True)

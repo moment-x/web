@@ -12,6 +12,7 @@ SECRET_KEY = 'ty#6j$h&i=)t$o^ea4uzx4-8kww1=(^6k*2k5hlv^#^$db1_b!'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+DEBUG_PROPAGATE_EXCEPTIONS = True
 
 ALLOWED_HOSTS = []
 
