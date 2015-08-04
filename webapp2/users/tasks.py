@@ -2,7 +2,7 @@ from celery import shared_task              # celery
 
 from django.http import HttpResponse        # django
 
-from push import easypush                   # project
+from qpush import push                   # project
 
 
 FRIEND_FORMAT_STRING = '%s加你好友'
@@ -18,5 +18,5 @@ def add_req_push(sender, receiver):
         CUSTOM_TYPE: CUSTOM_TYPE_FRIEND,
         CUSTOM_SENDER: sender.username,
     }
-    msg = easypush.BuildIOSMsg(alert, custom)
-    easypush.DemoPushToken(msg, receiver.token)
+    msg = push.BuildIOSMsg(alert, custom)
+    push.DemoPushToken(msg, receiver.token)

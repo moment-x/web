@@ -3,3 +3,4 @@ mysqlclient
 celery
 uwsgi
 tencentyun
+requests

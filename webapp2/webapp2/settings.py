@@ -29,8 +29,6 @@ INSTALLED_APPS = (
     'squares',
     'users',
     #
-    'push',
-    #
 )
 
 MIDDLEWARE_CLASSES = (
